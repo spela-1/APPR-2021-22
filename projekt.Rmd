@@ -1,0 +1,51 @@
+---
+title: "Poročilo pri predmetu Analiza podatkov s programom R"
+author: "Študent FMF"
+output:
+  html_document: default
+  pdf_document:
+    includes:
+      in_header: lib/styles.sty
+    latex_engine: xelatex
+runtime: shiny
+---
+
+```{r setup, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
+
+# Uvoz vseh potrebnih knjižnic
+source("lib/libraries.r", encoding="UTF-8")
+```
+
+
+## Izbira teme
+
+***
+
+## Obdelava, uvoz in čiščenje podatkov
+
+```{r uvoz}
+source("uvoz/uvoz.r", encoding="UTF-8")
+```
+
+***
+
+## Analiza in vizualizacija podatkov
+
+```{r vizualizacija, results='hide'}
+source("vizualizacija/vizualizacija.r", encoding="UTF-8")
+```
+
+***
+
+## Napredna analiza podatkov
+
+```{r analiza}
+source("analiza/analiza.r", encoding="UTF-8")
+```
+
+***
+
+```{r shiny}
+#shinyAppDir("shiny", options=list(width="100%", height=600))
+```
