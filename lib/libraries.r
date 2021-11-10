@@ -5,7 +5,7 @@ library(tidyr)
 library(tmap)
 library(shiny)
 library(readr)
-
+library(dplyr)
 
 options(gsubfn.engine="R")
 
