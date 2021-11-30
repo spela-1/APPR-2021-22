@@ -4,6 +4,7 @@ Vzorčni repozitorij za projekt pri predmetu APPR v študijskem letu 2021/22.
 
 
 ##Število obsojenih za kriminalna dejanja v Sloveniji glede na socio-ekonomsko stanje
+
 V svojem projektu bom analizirala število obsojenih za kriminalna dejanja v Sloveniji glede na socio-ekonomsko stanje gospodinjstev. Rada bi ugotovila, če le te vplivajo na kriminal. Rast/padanje kriminala želim primerjati z spreminjanjem povprečne samoocene splošnega zadovoljstva z življenjem, stopnjo tveganja revščine in pa s stanovanjskimi razmerami ljudi.
 Podatke, ki bom vključila v projektno naloga sem našla na stani Statističnega urada republike Slovenije in Eurostatu.
 
