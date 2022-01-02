@@ -6,10 +6,16 @@ library(tidyr)
 library(dplyr)
 library(rvest)
 library(XML)
+library(stringr)
 
 sl <- locale("sl", decimal_mark=".", grouping_mark=",")
 
-
+#Statistična znamenja	Pomen
+#-	ni pojava
+#...	ni podatka
+#z	statistično zaupno
+#M	manj zanesljiva ocena – previdna uporaba
+#N	za objavo premalo zanesljiva ocena
 
 #----------------------------------------------------------------------------------
 ## uvoz tabele zločina po vrstah zločina na 100 000 prebivalcev
@@ -19,14 +25,20 @@ sl <- locale("sl", decimal_mark=".", grouping_mark=",")
 zlocin<- readHTMLTable("podatki/zlocin.html")
 zlocin <- zlocin[["NULL"]]
 
+# prevedem imena stolpcev
+ 
+colnames(zlocin) <-  c("leto", "nameren umor", "poskus umora", "napad", "ugrabitev", "spolno nasilje", "posilstvo", "spolni napad", "rop", "vlom", "vlom v privatno posest", "kraja", "kraja prevoznaga sredstva", "zločin povezan z drogami")
 
-
+####vsako vrednost pomnožim s 100, da pridejo podatki na 1000 prebivalcev:
+####?????????????????????????????????????????????
+####
+zlocin[, 2:14] <- zlocin[,2:14] *100
 #-----------------------------------------------------------------------------------
 ## uvoz tabele obsojenih na 1000 prebivalcev po regijah
 
   
-obsojeni_r <- read_delim("podatki/obsojeni.csv", 
-                         delim=";", col_names=TRUE, na="-", skip=2, locale=locale(decimal_mark= ".", encoding = "Windows-1250"))
+obsojeni_r <- read_delim("podatki/obsojeni.csv",
+                         delim=";", col_names=TRUE, na="...", skip=2, locale=locale(decimal_mark= ".", encoding = "Windows-1250"))
 
 
 #transponiram :
@@ -38,6 +50,19 @@ obsojeni_r <- pivot_longer(obsojeni_r, cols = colnames(obsojeni_r)[-1],
 obsojeni_r <- pivot_wider(obsojeni_r,
                         names_from = 'STATISTIČNA REGIJA',
                         values_from = 'x')
+
+# uredim leta:
+
+vzorec <- "[2][0][0-9]{2}"
+
+leta <- unlist(str_extract_all(obsojeni_r$leto, vzorec))
+
+obsojeni_r$leto <- leta
+
+
+# ročno izbrišem stolpec tujina, ker je povsod NA
+
+obsojeni_r$'Tujina' <- NULL
 
 #--------------------------------------------------------------------------------------
 ## uvoz tabele samoocene splošnega zadovoljstva
@@ -59,6 +84,14 @@ zadovoljstvo <- pivot_wider(zadovoljstvo,
                           names_from = 'STATISTIČNA REGIJA',
                           values_from = 'x')
 
+# uredim leta:
+
+vzorec <- "[2][0][0-9]{2}"
+
+leta <- unlist(str_extract_all(zadovoljstvo$leto, vzorec))
+
+zadovoljstvo$leto <- leta
+
 #--------------------------------------------------------------------------------------
 ## uvoz Stopnja tveganja revščine, statistične regije, Slovenija, letno %
 
@@ -75,6 +108,8 @@ revscina <- pivot_longer(revscina, cols = colnames(revscina)[-1],
 revscina <- pivot_wider(revscina,
                             names_from = 'STATISTIČNA REGIJA',
                             values_from = 'x')
+
+#pri tej tabeli so leta že urejena
 
 #----------------------------------------------------------------------------------------
 ## uvoz Stanovanjske razmere, statistične regije, Slovenija, letno
@@ -93,6 +128,13 @@ stanovanje <- pivot_wider(stanovanje,
                             names_from = 'STATISTIČNA REGIJA',
                             values_from = 'x')
 
+# uredim leta:
+
+vzorec <- "[2][0][0-9]{2}"
+
+leta <- unlist(str_extract_all(stanovanje$leto, vzorec))
+
+stanovanje$leto <- leta
 
 ##--------------------------------------------------------------------------------------
 ## uvoz tabele obsojenih na 1000 prebivalcev po občinah
@@ -113,6 +155,17 @@ obsojeni_o <- pivot_wider(obsojeni_o,
                           names_from = 'OBČINE',
                           values_from = 'x')
 
+# uredim leta:
+
+vzorec <- "[2][0][0-9]{2}"
+
+leta <- unlist(str_extract_all(obsojeni_o$leto, vzorec))
+
+obsojeni_o$leto <- leta
+
+
+
+
 ##--------------------------------------------------------------------------------
 ## uvoz tabele povprečne plače po občinah 
 #(za 2021 je ze narejen stolpec, vendar vrednosti niso označene kot NA -> vn uzemi stolpec)
@@ -124,7 +177,6 @@ placa <- read_delim("podatki/placao.csv",
                       "2020" = col_double()
                     )
                     )
-
 
 
 #transponiram :
@@ -139,5 +191,11 @@ placa <- pivot_wider(placa,
 
 
 
+# uredim leta:
 
+vzorec <- "[2][0][0-9]{2}"
+
+leta <- unlist(str_extract_all(placa$leto, vzorec))
+
+placa$leto <- leta
 
