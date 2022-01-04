@@ -34,8 +34,8 @@ colnames(zlocin1) <-  c("leto", "nameren umor", "poskus umora", "napad", "ugrabi
 #Polnoletni storilci zoper katere je bil kazenski postopek pri državnem tožilstvu končan 
 #po kaznivem dejanju, spolu, starosti ob storitvi kaznivega dejanja in vrsti odločbe, Slovenija, letno
 
-zlocinci <- obsojeni_r <- read_delim("podatki/zlocinci.csv",
-                                     delim=";", col_names=TRUE, col_select=c(-2), na="...", skip=2, locale=locale(decimal_mark= ".", encoding = "Windows-1250"))
+zlocinci  <- read_delim("podatki/zlocinci.csv",
+                                     delim=";", col_names=TRUE, col_select=c(-2), na=c("...", 'M', 'N', 'z'), skip=2, locale=locale(decimal_mark= ".", encoding = "Windows-1250"))
 
 # izberem samo glavne kategorije:
 vzorec1 <- "\\d\\.[IVX][IVX]*\\s.*"  
@@ -68,6 +68,7 @@ zlocinci <- zlocinci %>%
 
 zlocinci <- zlocinci %>% filter(zlocinci$"starost" == "Starost - SKUPAJ") %>% select(-"starost")
 
+
 #-----------------------------------------------------------------------------------
 ## uvoz tabele obsojenih na 1000 prebivalcev po regijah
 
@@ -76,15 +77,18 @@ obsojeni_r <- read_delim("podatki/obsojeni.csv",
                          delim=";", col_names=TRUE, na="...", skip=2, locale=locale(decimal_mark= ".", encoding = "Windows-1250"))
 
 
-#transponiram :
+
 
 obsojeni_r <- pivot_longer(obsojeni_r, cols = colnames(obsojeni_r)[-1], 
                          names_to = 'leto',
                          values_to =  'Stevilo obsojenih na 1000 prebivalcev')
 
+
+#transponiram :
 #obsojeni_r <- pivot_wider(obsojeni_r,
 #                        names_from = 'STATISTIČNA REGIJA',
 #                        values_from = 'Stevilo obsojenih na 1000 prebivalcev')
+
 
 # uredim leta:
 
@@ -112,11 +116,6 @@ zadovoljstvo <- pivot_longer(zadovoljstvo, cols = colnames(zadovoljstvo)[-1],
                            values_to =  'Samoocene splošnega zadovoljstva')
 
 
-#transponiram :
-#zadovoljstvo <- pivot_wider(zadovoljstvo,
-#                         names_from = 'STATISTIČNA REGIJA',
-#                          values_from = 'Samoocene splošnega zadovoljstva')
-
 # uredim leta:
 
 vzorec <- "[2][0][0-9]{2}"
@@ -137,11 +136,6 @@ revscina <- pivot_longer(revscina, cols = colnames(revscina)[-1],
                              values_to =  'Stopnja tveganja revščine')
 
 
-#transponiram :
-#revscina <- pivot_wider(revscina,
-#                            names_from = 'STATISTIČNA REGIJA',
-#                            values_from = 'Stopnja tveganja revščine')
-
 #pri tej tabeli so leta že urejena
 
 #----------------------------------------------------------------------------------------
@@ -155,12 +149,6 @@ stanovanje <- pivot_longer(stanovanje, cols = colnames(stanovanje)[-1],
                              names_to = 'leto',
                              values_to =  'Stanovanjske razmere')
 
-#transponiram :
-#stanovanje <- pivot_wider(stanovanje,
-#                            names_from = 'STATISTIČNA REGIJA',
-#                            values_from = 'Stanovanjske razmere')
-
-
 
 # uredim leta:
 
@@ -169,7 +157,8 @@ leta <- unlist(str_extract_all(stanovanje$leto, vzorec))
 stanovanje$leto <- leta
 
 ##-------------------------------------------------------------------------------------
-##TABELA3: tabele 'Samoocene splošnega zadovoljstva', 'Stopnja tveganja revščine' in 'Stanovanjske razmere'
+##TABELA PO REGIJAH: tabele 'Samoocene splošnega zadovoljstva', 'Stopnja tveganja revščine',
+##                      'Stanovanjske razmere' in 'Obsojenih na 1000 prebivalcev po regija'
 ##          združim v skupno tabelo
 
 # v tabeli 'Samoocene splošnega zadovoljstva' je najstarejši podatek iz leta 2012,
@@ -179,7 +168,10 @@ stanovanje$leto <- leta
 #revscina <- revscina %>% filter(leto>=2012)
 #stanovanje <- stanovanje %>% filter(leto>=2012)
 
-tabela3 <- zadovoljstvo %>% left_join(revscina, by=c("STATISTIČNA REGIJA", "leto")) %>% left_join(stanovanje, by=c("STATISTIČNA REGIJA", "leto"))
+tabela_r <- obsojeni_r %>% left_join(zadovoljstvo, by=c("STATISTIČNA REGIJA","leto")) %>%
+            left_join(revscina, by=c("STATISTIČNA REGIJA", "leto")) %>% 
+            left_join(stanovanje, by=c("STATISTIČNA REGIJA", "leto"))
+            
 ##--------------------------------------------------------------------------------------
 ## uvoz tabele obsojenih na 1000 prebivalcev po občinah
 
@@ -189,15 +181,9 @@ obsojeni_o <- read_delim("podatki/obsojenio.csv",
 
 
 
-#transponiram :
-
 obsojeni_o <- pivot_longer(obsojeni_o, cols = colnames(obsojeni_o)[-1], 
                            names_to = 'leto',
-                           values_to =  'x')
-
-obsojeni_o <- pivot_wider(obsojeni_o,
-                          names_from = 'OBČINE',
-                          values_from = 'x')
+                           values_to =  'Število obsojenih na 1000 prebivalcev')
 
 # uredim leta:
 
@@ -221,23 +207,20 @@ placa <- read_delim("podatki/placao.csv",
                     )
 
 
-#transponiram :
-
 placa <- pivot_longer(placa, cols = colnames(placa)[-1], 
                            names_to = 'leto',
-                           values_to =  'x')
-
-placa <- pivot_wider(placa,
-                          names_from = 'OBČINE',
-                          values_from = 'x')
+                           values_to =  'Povprecna plača')
 
 
 
-# uredim leta:
+##--------------------------------------------------------------------------------
+##  TABELA PO OBČINAH: tabeli ' obsojenih na 1000 prebivalcev po občinah' in 'povprečne plače po občinah'
+##                      združim v skupno tabelo
 
-vzorec <- "[2][0][0-9]{2}"
+#ker je najstarejši podatek za plače iz 2008:
 
-leta <- unlist(str_extract_all(placa$leto, vzorec))
+o <- obsojeni_o %>% filter(leto>=2008)
 
-placa$leto <- leta
+tabela_o <- o %>% left_join(placa, by=c("OBČINE","leto")) 
 
+##--------------------------------------------------------------------------------
