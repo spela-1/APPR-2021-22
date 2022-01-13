@@ -17,7 +17,7 @@ g1 <- tabela_r %>% filter(regija!="SLOVENIJA") %>%
     mapping = aes(x = leto, y = obsojeni, color = regija)
   ) +
   ylab("Število obsojenih na 1000 prebivalcev") + 
-  geom_line() + geom_point()
+  geom_line() + geom_point() 
   
 
 print(g1)
@@ -29,7 +29,7 @@ g2 <- tabela_r %>% filter(regija!="SLOVENIJA") %>%
   ) +
   ylab("Število obsojenih na 1000 prebivalcev")  +
   xlab("Samoocena splošnega zadovoljstva z življenjem") + 
-  geom_point(position = position_jitter(width = 0.10))      
+  geom_point(position = position_jitter(width = 0.10))     
              
 print(g2)
 
@@ -58,7 +58,37 @@ g4 <- zlocinci %>% filter(starost != "Starost - SKUPAJ") %>%
 
 print(g4)
 
-########################################## ZEMLJEVIDI #########################################################
+
+
+g5 <- tabela2 %>%filter(leto == 2020)%>% 
+  ggplot(
+    mapping = aes(x = starost, y = obsojeni, fill=dejanje)
+  ) +
+  ylab("Število obsojenih")  + 
+  xlab("Starost zločincev")+
+  geom_col() + facet_wrap(.~ spol,ncol = 5)
+
+print(g5)
+
+
+
+g6 <- tabela_o %>% filter(obcina!="SLOVENIJA") %>% filter(leto >2010)%>%
+  ggplot(
+    mapping = aes(y = placa, x = obsojeni)
+  ) +
+  xlab("Število obsojenih na 1000 prebivalcev")  +
+  ylab("Povprečna plača") + 
+  scale_y_log10() +
+  geom_point(position = position_jitter(width = 0.10)) +
+  facet_wrap(.~ leto,ncol = 5)
+
+print(g6)
+ 
+# zdi se kot da spremenljivki nista najbolj povezani, zato bo opustila analiz med njima
+
+#--------------------------------------------------------------------------------
+######## zamljevid
+
 tabela <- tabela_o %>% filter(leto =="2013") %>% filter(obcina != "SLOVENIJA" ) 
 
 library(sp)

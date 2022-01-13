@@ -87,7 +87,6 @@ zlocinci$leto <- parse_double(zlocinci$leto)
 zlocinci$starost <- parse_factor(zlocinci[["starost"]], levels = c("Starost - SKUPAJ", "do 20 let", "od 21 do 30 let", "od 31 do 40 let", "od 41 do 50 let", "od 51 do 60 let", "nad 60 let"))
 
 
-
 #-----------------------------------------------------------------------------------
 ## uvoz tabele obsojenih na 1000 prebivalcev po regijah
 
@@ -261,4 +260,15 @@ tabela_o$leto<- as.double(tabela_o$leto)
 tabela_o$obsojeni<- as.double(tabela_o$obsojeni)
 tabela_o$placa<- as.double(tabela_o$placa)
 ##--------------------------------------------------------------------------------
+# tabela1 ki nam bo dala najbolj pogoste zločine -- dodala kasneje
+tabela1 <- zlocinci %>% filter(starost == "Starost - SKUPAJ") %>% filter(dejanje != "KAZNIVO DEJANJE - SKUPAJ") %>%
+  group_by(dejanje) %>% summarise(obsojeni =sum(obsojeni)) %>% arrange(desc(obsojeni)) %>% head(10)
+tabela2 <- zlocinci%>% filter(starost != "Starost - SKUPAJ")%>% filter(dejanje %in% tabela1$dejanje)
 
+tabela2$starost = str_replace_all(tabela2$starost ,"do 20 let" ,"do 20")
+tabela2$starost = str_replace_all(tabela2$starost ,"od 21 do 30 let" ,"21-30")
+tabela2$starost = str_replace_all(tabela2$starost ,"od 31 do 40 let" ,"31-40")
+tabela2$starost = str_replace_all(tabela2$starost ,"od 41 do 50 let" ,"41-50")
+tabela2$starost = str_replace_all(tabela2$starost ,"od 51 do 60 let" ,"51-60")
+tabela2$starost = str_replace_all(tabela2$starost ,"nad 60 let" ,"od 60")
+tabela2$starost <- parse_factor(tabela2[["starost"]], levels = c("do 20", "21-30", "31-40", "41-50", "51-60", "od 60"))
