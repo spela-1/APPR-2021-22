@@ -1,5 +1,6 @@
 # 3. faza: Vizualizacija podatkov
 
+..
 
 library(tidyverse)
 library(ggplot2)
