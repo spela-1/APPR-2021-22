@@ -261,6 +261,8 @@ tabela_o$obsojeni<- as.double(tabela_o$obsojeni)
 tabela_o$placa<- as.double(tabela_o$placa)
 ##--------------------------------------------------------------------------------
 # tabela1 ki nam bo dala najbolj pogoste zločine -- dodala kasneje
+# s tabela2 nato rišem graf, ker ima urejene vrednosti
+
 tabela1 <- zlocinci %>% filter(starost == "Starost - SKUPAJ") %>% filter(dejanje != "KAZNIVO DEJANJE - SKUPAJ") %>%
   group_by(dejanje) %>% summarise(obsojeni =sum(obsojeni)) %>% arrange(desc(obsojeni)) %>% head(10)
 tabela2 <- zlocinci%>% filter(starost != "Starost - SKUPAJ")%>% filter(dejanje %in% tabela1$dejanje)
