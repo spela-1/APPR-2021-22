@@ -274,3 +274,35 @@ tabela2$starost = str_replace_all(tabela2$starost ,"od 41 do 50 let" ,"41-50")
 tabela2$starost = str_replace_all(tabela2$starost ,"od 51 do 60 let" ,"51-60")
 tabela2$starost = str_replace_all(tabela2$starost ,"nad 60 let" ,"od 60")
 tabela2$starost <- parse_factor(tabela2[["starost"]], levels = c("do 20", "21-30", "31-40", "41-50", "51-60", "od 60"))
+
+
+library(tm)
+
+tabela2$dejanje <- removeWords(tabela2$dejanje, "KAZNIVA DEJANJA ZOPER")
+
+
+##-----------------------------------------------------------------------
+# uredim tebelo ki bo uporabna za grupiranje kaznivih dejanj
+
+tabela3 <- zlocinci%>% filter(starost != "Starost - SKUPAJ")%>% 
+  filter(dejanje != "KAZNIVO DEJANJE - SKUPAJ")%>%
+  filter(leto == 2020) %>% dplyr:: select(-leto)
+
+
+tabela3$starost = str_replace_all(tabela3$starost ,"do 20 let" , "20")
+tabela3$starost = str_replace_all(tabela3$starost ,"od 21 do 30 let" , "30")
+tabela3$starost = str_replace_all(tabela3$starost ,"od 31 do 40 let" , "40")
+tabela3$starost = str_replace_all(tabela3$starost ,"od 41 do 50 let" ,"50")
+tabela3$starost = str_replace_all(tabela3$starost ,"od 51 do 60 let" ,"60")
+tabela3$starost = str_replace_all(tabela3$starost ,"nad 60 let" ,"70")
+
+
+
+
+
+
+
+
+
+
+

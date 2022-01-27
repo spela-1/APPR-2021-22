@@ -1,6 +1,5 @@
 # 3. faza: Vizualizacija podatkov
 
-..
 
 library(tidyverse)
 library(ggplot2)
@@ -67,7 +66,9 @@ g5 <- tabela2 %>%filter(leto == 2020)%>%
   ) +
   ylab("Število obsojenih")  + 
   xlab("Starost zločincev")+
-  geom_col() + facet_wrap(.~ spol,ncol = 5)
+  geom_col() + facet_wrap(.~ spol,ncol = 5) + 
+  labs(fill = "Kaznivo dejanje zoper")
+
 
 print(g5)
 
@@ -75,7 +76,7 @@ print(g5)
 
 g6 <- tabela_o %>% filter(obcina!="SLOVENIJA") %>% filter(leto >2010)%>%
   ggplot(
-    mapping = aes(y = placa, x = obsojeni)
+    mapping = aes(x = placa, y = obsojeni)
   ) +
   xlab("Število obsojenih na 1000 prebivalcev")  +
   ylab("Povprečna plača") + 
@@ -88,9 +89,9 @@ print(g6)
 # zdi se kot da spremenljivki nista najbolj povezani, zato bo opustila analiz med njima
 
 #--------------------------------------------------------------------------------
-######## zamljevid
+######## zemljevid
 
-tabela <- tabela_o %>% filter(leto =="2013") %>% filter(obcina != "SLOVENIJA" ) 
+tabela <- tabela_o %>% filter(leto =="2015") %>% filter(obcina != "SLOVENIJA" ) 
 
 library(sp)
 library(rgdal)
@@ -122,9 +123,11 @@ obsojeni.na.zemljevidu <- tabela%>%
 obcine.obsojeni.zemljevid <- merge(obcine, obsojeni.na.zemljevidu,
                                 by.x = "OB_UIME", by.y = "obcina")
 
+
+tmap_mode("view")
 tm_shape(obcine.obsojeni.zemljevid) +
   tm_polygons("obsojeni", popup.vars = c("Število obsojenih na 1000 preb: " = "obsojeni")) + tm_legend(show=FALSE)
-tmap_mode("view") 
+ 
 
 
 
