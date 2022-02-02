@@ -1,63 +1,214 @@
 # 4. faza: Napredna analiza podatkov
 
 library(ggalt)
+library(dplyr)
 
+source("uvoz/uvoz.r", encoding="UTF-8")
 
-# RAZVRŠČANJE V SKUPINE
+###################### RAZVRŠČANJE V SKUPINE ###########################
 
+tabela3.norm <- tabela3[c(2:7)] %>% as.matrix()%>% scale()
+rownames(tabela3.norm) <- tabela3$dejanje
 
-tabela3$starost <- parse_double(tabela3[["starost"]])
-tabela3$spol <- (tabela3$spol=="Moški")*1
-tabela3.norm <- tabela3 %>%dplyr:: select(-dejanje)
-
-
-tabela3.norm <- tabela3.norm%>% 
-  mutate(spol = scale(spol),
-         starost = scale(starost),
-         obsojeni = scale(obsojeni))
-
-
-# z dendogramom
+#dendogramom
 
 dendrogram  <- dist(tabela3.norm) %>% hclust(method = "ward.D")
-plot(dendrogram, hang=-5, cex=0.1)
-rect.hclust(dendrogram,k=3,border="red")
-p <- cutree(dendrogram, k=3)
+plot(dendrogram, hang=-0.5, cex=0.01)
 
 
 
-#razvrsti vrstice v 3 skupine :
+######### v koliko skupin je treba razdeliti?
 
-skupine = tabela3.norm %>%   
-  kmeans(centers = 3) %>%
-  getElement("cluster") %>%
-  as.ordered()
+hc.kolena = function(dendrogram, od = 1, do = NULL, eps = 0.5) {
+  # število primerov in nastavitev parametra do
+  n = length(dendrogram$height) + 1
+  do = n - 1
+  
+  # naredi tabelo
+  k.visina = tibble(
+    k = as.ordered(od:do),
+    visina = dendrogram$height[do:od]
+  ) %>%
+    # sprememba višine
+    mutate(
+      dvisina = visina - lag(visina)
+    ) %>%
+    # ali se je intenziteta spremembe dovolj spremenila?
+    mutate(
+      koleno = lead(dvisina) - dvisina > eps
+    )
+  k.visina
+}
+
+# iz tabele k.visina vrne seznam vrednosti k,
+# pri katerih opazujemo koleno
+hc.kolena.k = function(k.visina) {
+  k.visina %>%
+    filter(koleno) %>%
+    dplyr:: select(k) %>%
+    unlist() %>%
+    as.character() %>%
+    as.integer()
+}
+
+
+# narišemo diagram višin združevanja
+diagram.kolena = function(k.visina) {
+  k.visina %>% ggplot() +
+    geom_point(
+      mapping = aes(x = k, y = visina),
+      color = "red"
+    ) +
+    geom_line(
+      mapping = aes(x = as.integer(k), y = visina),
+      color = "red"
+    ) +
+    geom_point(
+      data = k.visina %>% filter(koleno),
+      mapping = aes(x = k, y = visina),
+      color = "blue", size = 2
+    ) +
+    ggtitle(paste("Kolena:", paste(hc.kolena.k(k.visina), collapse = ", "))) +
+    xlab("število skupin (k)") +
+    ylab("razdalja pri združevanju skupin") +
+    theme_classic()
+}
+
+diagram.kolena(r)
+
+
+### dendogram razrežemo na 5 delov
+plot(dendrogram, hang=-0.5, cex=0.01)
+rect.hclust(dendrogram,k=5,border="red")
+p <- cutree(dendrogram, k=5)
 
 
 
 
 # nariše diagram:
 
+#podatki <-  tabela3.norm %>%
+#    bind_cols(p) %>%
+#    rename(skupina = ...2)%>%
+#    rename(prva = ...1)
+  
+#d = podatki %>%ggplot(
+#      mapping = aes(
+#       color= skupina)     x,y=?????
+#      ) +
+#    geom_point() +
+#    geom_label(label = tabela3$dejanje, size = 2) +
+#    scale_color_hue() +
+#    theme_classic()
+  
+#  for (i in 1:3) {
+#    d = d + geom_encircle(
+#      data = podatki %>%
+#        filter(skupina == i)
+#    )
+#  }
 
-podatki <-  tabela3.norm %>%
-    bind_cols(skupine) %>%
-    rename(skupina = ...4)
+#print(d)  
+
+
+
+##########################   NAPOVEDNI MODEL   ###########################  
+
+library(ggplot2)
+library(GGally)
+library(dplyr)
+ggpairs(tabela_r %>% dplyr::select(obsojeni, zadovoljstvo, revscina, stanovanje))
+#upoštevala bom vse tri parametre
+
+# kasnjene ugotovila da je bolje če upoštevam tudi leta in regije
+
+podatki.n <- tabela_r
+
+
+#  prečno preverjanje:
+
+napaka <- function(k, formula){
   
-d = podatki %>%ggplot(
-      mapping = aes(
-        x = starost, y = obsojeni, color = skupina)
-      ) +
-    geom_point() +
-    geom_label(label = tabela3$dejanje, size = 2) +
-    scale_color_hue() +
-    theme_classic()
+  set.seed(1)
+  n <- nrow(podatki.n)
   
-  for (i in 1:7) {
-    d = d + geom_encircle(
-      data = podatki %>%
-        filter(skupina == i)
-    )
+  # v je vektor premešanih števim od 1 do n:
+  v <-sample(1:n)
+  #razrez vzame vektor 1:n in ga razreže v k delov (1:n elementom da cifre od 1 do k)
+  razrez <- cut(1:n, k, labels=FALSE)
+  # vektor v razbije glede na razrez
+  razbitje <- split(v, razrez)
+  #naredi n dolg vektor elementov 0
+  pp.napovedi <- rep(0, n)
+  
+  for (i in (1:k)){
+    #ucni podatki:
+    ucenje <- podatki.n[-razbitje[[i]],]
+    #testni podatki:
+    test <- podatki.n[razbitje[[i]],]
+    model <- lm(data=ucenje, formula=formula)
+    #napovemo za testne podatke
+    napovedi<- predict(model, newdata=test)
+    pp.napovedi[razbitje[[i]]] <- napovedi
   }
 
-print(d)  
+    napaka = mean((pp.napovedi - podatki.n$obsojeni)^2)
+    
+    return (napaka)
+
+}
+
+napaka(3, obsojeni ~ .)
+
+# puskusimo še z naključnimi gozdovi
+  
+library(ranger)
+
+napaka.ng <- function(k, formula){
+  
+  set.seed(1)
+  n <- nrow(podatki.n)
+  
+  v <-sample(1:n)
+  razrez <- cut(1:n, k, labels=FALSE)
+  razbitje <- split(v, razrez)
+  pp.napovedi <- rep(0, n)
+  
+  for (i in (1:k)){
+    ucenje <- podatki.n[-razbitje[[i]],]
+    test <- podatki.n[razbitje[[i]],]
+    model <- ranger(formula, data=ucenje)
+    napovedi<- predict(model, test)$predictions
+    pp.napovedi[razbitje[[i]]] <- napovedi
+  }
+  
+  napaka = mean((pp.napovedi - podatki.n$obsojeni)^2)
+  
+  return (napaka)
+  
+}
+
+napaka.ng(3, obsojeni ~ .)
+
+
+####### MOČ POSAMEZNE SPREMENLJIVKE
+
+library(iml)
+
+# podatki ki so uporabljeni zastrojno učenej zgoraj: podatki.n 
+
+
+model <- lm(formula=obsojeni~., data=podatki.n)
+
+X = podatki.n %>% dplyr:: select(!obsojeni)
+
+pfun = function(model, newdata) {
+  predict(model,newdata = newdata)
+}
+
+lm.pred = Predictor$new(model= model, data = X, y = podatki.n$obsojeni, predict.function = pfun)
+
+lm.moci = FeatureImp$new(lm.pred, loss = "mse")
+
+plot(lm.moci)
 

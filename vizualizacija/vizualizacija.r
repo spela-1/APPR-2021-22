@@ -34,7 +34,6 @@ g2 <- tabela_r %>% filter(regija!="SLOVENIJA") %>%
 print(g2)
 
 
-
 g3 <- zlocinci %>% filter(dejanje == "KAZNIVO DEJANJE - SKUPAJ") %>%
   filter(starost != "skupaj") %>%
   ggplot(
@@ -89,7 +88,7 @@ print(g6)
 # zdi se kot da spremenljivki nista najbolj povezani, zato bo opustila analiz med njima
 
 #--------------------------------------------------------------------------------
-######## zemljevid
+############################### ZEMLJEVID ######################################
 
 tabela <- tabela_o %>% filter(leto =="2015") %>% filter(obcina != "SLOVENIJA" ) 
 

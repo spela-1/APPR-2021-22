@@ -46,6 +46,7 @@ vzorec1 <- "\\d\\.[IVX][IVX]*\\s.*|[:alpha:].*"
 zlocini2 <- unlist(str_extract_all(zlocinci$"KAZNIVO DEJANJE", vzorec1))
 zlocinci <- zlocinci %>% filter(zlocinci$"KAZNIVO DEJANJE" %in% zlocini2)
 
+tabela3 <- zlocinci
 
 #obrnem:
 zlocinci <- pivot_longer(zlocinci, cols = colnames(zlocinci)[-1], 
@@ -288,20 +289,28 @@ tabela3 <- zlocinci%>% filter(starost != "Starost - SKUPAJ")%>%
   filter(dejanje != "KAZNIVO DEJANJE - SKUPAJ")%>%
   filter(leto == 2020) %>% dplyr:: select(-leto)
 
-
-tabela3$starost = str_replace_all(tabela3$starost ,"do 20 let" , "20")
-tabela3$starost = str_replace_all(tabela3$starost ,"od 21 do 30 let" , "30")
-tabela3$starost = str_replace_all(tabela3$starost ,"od 31 do 40 let" , "40")
-tabela3$starost = str_replace_all(tabela3$starost ,"od 41 do 50 let" ,"50")
-tabela3$starost = str_replace_all(tabela3$starost ,"od 51 do 60 let" ,"60")
-tabela3$starost = str_replace_all(tabela3$starost ,"nad 60 let" ,"70")
+#t <- tabela3 %>% group_by(dejanje) %>% summarise(obsojeni=sum(obsojeni)) 
+#t <- t$obsojeni == 0
 
 
+tabela3 <- tabela3 %>% group_by(dejanje, starost) %>% summarise(obsojeni=sum(obsojeni))
+
+tabela3 <- pivot_wider(tabela3,
+                       names_from = 'starost',
+                       values_from = 'obsojeni')
+
+#tabela3 <- tabela3[!t, ]
+
+#odločila sem se izbrisati vse vrstice iz tabele, v katerih se ni v nobeni starostni tabeli zgodil zločin
 
 
 
-
-
+#tabela3$starost = str_replace_all(tabela3$starost ,"do 20 let" , "20")
+#tabela3$starost = str_replace_all(tabela3$starost ,"od 21 do 30 let" , "30")
+#tabela3$starost = str_replace_all(tabela3$starost ,"od 31 do 40 let" , "40")
+#tabela3$starost = str_replace_all(tabela3$starost ,"od 41 do 50 let" ,"50")
+#tabela3$starost = str_replace_all(tabela3$starost ,"od 51 do 60 let" ,"60")
+#tabela3$starost = str_replace_all(tabela3$starost ,"nad 60 let" ,"70")
 
 
 
