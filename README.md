@@ -10,22 +10,30 @@ Podatke, ki bom vključila v projektno naloga sem našla na stani Statističnega
 
 Podatke bom uredila v tabele:
 
+Podatke sem uredila v naslednje tabele:
+  
+
 Tabela 1: Kazniva dejanja glede na kategorije
-* Kategorije
-* Leto
-* Število obsojenih [prvotni podatki na 100 000 prebivalcev]
+* vrsta kaznivega dejanja
+* spol
+* starostna skupina
+* leto
+* Število obsojenih
 
 Tabela 2: Obsojeni glede na statistične regije
 * Statistične regije
 * Leto
-* Število obsojenih [prvotni podatek na 1000 prebivalcev]
+* Število obsojenih na 1000 prebivalcev
+* Povprečna samoocena zadovoljstva
+* Stopnja tveganja revščine
+* Stanovanjske razmere
 
-Tabela 3: Socialne razmere prebivalcev
-* Statistične regije
-* Leto
-* Povprečna samoocena splošnega zadovoljstva z življenjem
-* Stopnja tveganja revščine [odstotek oseb, ki živijo v gospodinjstvih z ekvivalentnim razpoložljivim dohodkom, nižjim od praga tveganja revščine]
-* Delež ljudi, ki stanuje v stanovanju, ki je »v slabem stanju« 
+
+Tabela 3: Obsojeni glede na občine
+* občina
+* leto (2008-2020)
+* število obsojenih na 1000 prebivalcev
+* povprečna plača
 
 
 ## Program

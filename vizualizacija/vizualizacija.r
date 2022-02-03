@@ -107,6 +107,7 @@ obcine <- uvozi.zemljevid("http://baza.fmf.uni-lj.si/OB.zip", "OB",
 tm_shape(obcine) + tm_polygons("OB_UIME") + tm_legend(show=FALSE)
 obcine$OB_UIME <- factor(obcine$OB_UIME)
 
+
 lvls <- levels(obcine$OB_UIME)
 obsojeni.zemljevid <- unique(tabela$obcina) %>% sort()
 
@@ -127,10 +128,5 @@ obcine.obsojeni.zemljevid <- merge(obcine, obsojeni.na.zemljevidu,
 tmap_mode("view")
 map <- tm_shape(obcine.obsojeni.zemljevid) +
   tm_polygons("obsojeni", popup.vars = c("Število obsojenih na 1000 preb: " = "obsojeni")) + tm_legend(show=FALSE)
- 
-
-
-
-
 
 
