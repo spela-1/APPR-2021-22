@@ -22,7 +22,7 @@ source("lib/libraries.r", encoding="UTF-8")
 
 V projektu sem analizirala kriminal v Sloveniji.
 Opazovala sem število obsojenih glede na vrsto dejanja, spol, starostno skupino in leto.
-Želela pa sem tudi povezati število obsojenih glede na socioekonomske kazalnike po raztličnih regijah oz. občinah po Sloveniji. Torej sem gledala povezavo med številom obsojenih in povprečno samooceno splošnega zadovoljstva z življenjem, stopnjo tveganja revščine, s stanovanjskimi razmerami in povprečna plača.  
+Želela pa sem tudi povezati število obsojenih glede na socioekonomske kazalnike po raztličnih regijah oz. občinah po Sloveniji. Torej sem gledala povezavo med številom obsojenih in povprečno samooceno splošnega zadovoljstva z življenjem, stopnjo tveganja revščine, s stanovanjskimi razmerami in povprečno plačo.  
 
 ***
 
@@ -32,11 +32,11 @@ Opazovala sem število obsojenih glede na vrsto dejanja, spol, starostno skupino
 source("uvoz/uvoz.r", encoding="UTF-8")
 ```
 
-Podatke sem našla na Eurostaut in SiStatu, in jih uvozila kot CSV oz. HTML detoteke. Kasneje sem namesto tabele iz Eurostata raje uporabila samo podatke iz SiStata, saj so se zdeli bolj zanimivi (uvoz tabele iz Eurostata zakomentirala).
+Podatke sem našla na Eurostatu in SiStatu, in jih uvozila kot CSV oz. HTML detoteke. Kasneje sem namesto tabele iz Eurostata raje uporabila samo podatke iz SiStata, saj so se zdeli bolj zanimivi (uvoz tabele iz Eurostata sem zakomentirala).
 
 Podatke sem uredila v naslednje tabele:
 
-1. _tabela "zlocinc" vsebuje podatke_:
+1. _tabela "zlocinci" vsebuje podatke_:
   - vrsta kaznivega dejanja
   - spol
   - starostna skupina
@@ -70,7 +70,7 @@ source("vizualizacija/vizualizacija.r", encoding="UTF-8")
 g1
 ```
 
-V prvem grafu vidimo število obsojenih na 1000 prbivalcev po letu po slovenskih statističnih regijah.
+V prvem grafu vidimo število obsojenih na 1000 prbivalcev po letih po slovenskih statističnih regijah.
 Vidimo, da kriminal na 1000 prebivalcev skozi leta pada, opazimo pa lahko tudi kako Jugovzhodna regija izstopa glede na ostale statistične regije.
 
 
@@ -78,37 +78,37 @@ Vidimo, da kriminal na 1000 prebivalcev skozi leta pada, opazimo pa lahko tudi k
 g2
 ```
 
-V naslednjem grafu sem želela preveriti, če je število obsojenih na 1000 prebivalcev v posamezni regiji odvisen od izbranih parametrov. Ti parametri so: Povpreča samoocena zadovoljstva z Življenjem, stopnja revščine in delež stanovanj, ki so ocenjena kot slaba.
-Ker, sem mi je zdelo, da lahko iz grafa opazim korelacijo, sem se odločila, da bom iste podatke kasneje uporabila pri izdelavi napovednega modela in preverila, če hipoteza drži.
+V naslednjem grafu sem želela preveriti, če je število obsojenih na 1000 prebivalcev v posamezni regiji odvisen od izbranih parametrov. Ti parametri so: Povpreča samoocena zadovoljstva z življenjem, stopnja revščine in delež stanovanj, ki so ocenjena kot slaba.
+Ker se mi je zdelo, da lahko iz grafa opazim korelacijo, sem se odločila, da bom iste podatke kasneje uporabila pri izdelavi napovednega modela in preverila, če hipoteza drži.
 
 
 ```{r g4, echo=FALSE, fig.align='center'}
 g4
 ```
 
-V tem grafu, sem želela prveriti, če katera od starostnih skupin močno izstopa po številu obsojenih. Vidimo, da je v starostni skupini do 20 let, malo obsojenih. To je zato, ker  podatki zaobjemajo le polnoletne osebe. Zdi se tudi, da je v starejših starostnih skupinah manjše število obosjenih.
+S tem grafom sem želela pokazati, če katera od starostnih skupin močno izstopa po številu obsojenih. Vidimo, da je v starostni skupini do 20 let malo obsojenih. To je zato, ker  podatki zaobjemajo le polnoletne osebe. Manjše število obosjenih pa je tudi v starejših starostnih skupinah.
 
 
 ```{r g5, echo=FALSE, fig.align='center'}
 g5
 ```
 
-Zanimalo me je, če so določena kaznima dejanja bolj pogosta glede na demografsek skupine.
-Da bi bil graf za to čimbolj pregelden, sem vzela le deset najpogostejših zločinov.
+Zanimalo me je, če so določena kazniva dejanja bolj pogosta glede na demografske skupine.
+Da bi bil graf bolj pregleden, sem vzela le deset najpogostejših zločinov.
 
 
 ```{r g6, echo=FALSE, fig.align='center'}
 g6
 ```
 
-Tako kot v drugem grafu, sem želela najti korelacijo med številom obosjenih na 1000 prebivalcev glede na izbrane parametre, tokrat glede na povprečno plačo. V tem primeru so podatki dani po občinah namesto statističnih regijah.
-Ker pa nisem opazila nobene korelacije sem se odločila, da na bom nadeljevala s to analizo.
+Tako kot v drugem grafu, sem želela najti korelacijo med številom obsojenih na 1000 prebivalcev glede na izbrane parametre, tokrat glede na povprečno plačo. V tem primeru so podatki dani po občinah namesto statističnih regijah.
+Ker pa nisem opazila nobene korelacije sem se odločila, da ne bom nadeljevala s to analizo.
 
 ***
 
 ## Zemljevid 
 
-*Števila obsojenih na 1000 prebivalcev po občinah v letu 2020*
+*Števila obsojenih na 1000 prebivalcev po občinah v letu 2015*
 
 ```{r map, echo=FALSE, fig.align='center'}
 map
@@ -136,8 +136,8 @@ kolena
 
 ### Napovedni model
 
-Napovedni model sem naredila s podatki iz drudega grafa. Sprva sam upoštevala le število obsojenih na 1000 prebivalcev v odvisnosti od treh izbranih parametrov (stopnja revscine, kvalitata stanovanj, samoocena zadovoljstva), kasneje pa sem ugotovila, da je za manjšo napako pomembna tudi regija in leto.
-Z prečnim preverjanjem, sem izračunala napako za napovedna modela: 
+Napovedni model sem naredila z istimi podatki kot je bil narsan graf "Število obsojenih glede na socioekonomska stanja". Sprva sam upoštevala le število obsojenih na 1000 prebivalcev v odvisnosti od treh izbranih parametrov (stopnja revscine, kvalitata stanovanj, samoocena zadovoljstva), kasneje pa sem ugotovila, da je za manjšo napako pomembna tudi regija in leto.
+S prečnim preverjanjem sem izračunala napako za napovedna modela: 
 
 - napaka za linearni napovedni model
 ```{r napaka.ln, echo=FALSE, fig.align='center'}
@@ -149,7 +149,7 @@ napaka.ng
 ```
 
 
-Ker je bila napaka pri linearnem modelu manjša, sem pri tem še izračunala, kokliko izbrane spremenljivke vplivjo na napoved
+Ker je bila napaka pri linearnem modelu manjša, sem pri tem še izračunala, koliko izbrane spremenljivke vplivajo na napoved
 ```{r moc, echo=FALSE, fig.align='center'}
 moc
 ```
