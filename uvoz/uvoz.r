@@ -10,7 +10,7 @@ library(stringr)
 
 sl <- locale("sl", decimal_mark=".", grouping_mark=",")
 
-#Statistična znamenja	Pomen
+#Statistična znamenja	za SiStat
 #-	ni pojava
 #...	ni podatka
 #z	statistično zaupno
@@ -46,15 +46,14 @@ vzorec1 <- "\\d\\.[IVX][IVX]*\\s.*|[:alpha:].*"
 zlocini2 <- unlist(str_extract_all(zlocinci$"KAZNIVO DEJANJE", vzorec1))
 zlocinci <- zlocinci %>% filter(zlocinci$"KAZNIVO DEJANJE" %in% zlocini2)
 
-tabela3 <- zlocinci
 
 #obrnem:
 zlocinci <- pivot_longer(zlocinci, cols = colnames(zlocinci)[-1], 
                            names_to = 'spol.starost.leto',
                            values_to =  'stevilo obsodb')
 
-#razbijem stolpec spol.starost.leto
 
+#razbijem stolpec spol.starost.leto
 zlocinci <- zlocinci %>%
   tidyr::extract(
     col = spol.starost.leto,
@@ -75,10 +74,6 @@ colnames(zlocinci) <-c("dejanje", "spol", "starost", "leto", "obsojeni")
 
 vzorcek = "([-]+)([0-9]*)"
 zlocinci$obsojeni = str_replace_all(zlocinci$obsojeni , vzorcek,"0")
-
-#a <- data.frame(zlocinci$starost)
-#a <- data.frame(lapply(a, function(x) {gsub("Starost - SKUPAJ", "skupaj", x)}))
-#zlocinci$starost <- a
 
 
 #summary(zlocinci)
@@ -265,7 +260,7 @@ tabela_o$placa<- as.double(tabela_o$placa)
 # s tabela2 nato rišem graf, ker ima urejene vrednosti
 
 tabela1 <- zlocinci %>% filter(starost == "Starost - SKUPAJ") %>% filter(dejanje != "KAZNIVO DEJANJE - SKUPAJ") %>%
-  group_by(dejanje) %>% summarise(obsojeni =sum(obsojeni)) %>% arrange(desc(obsojeni)) %>% head(10)
+  dplyr::group_by(dejanje) %>% dplyr::summarise(obsojeni=sum(obsojeni)) %>% arrange(desc(obsojeni)) %>% head(10)
 tabela2 <- zlocinci%>% filter(starost != "Starost - SKUPAJ")%>% filter(dejanje %in% tabela1$dejanje)
 
 tabela2$starost = str_replace_all(tabela2$starost ,"do 20 let" ,"do 20")
@@ -283,35 +278,22 @@ tabela2$dejanje <- removeWords(tabela2$dejanje, "KAZNIVA DEJANJA ZOPER")
 
 
 ##-----------------------------------------------------------------------
-# uredim tebelo ki bo uporabna za grupiranje kaznivih dejanj
+# uredim tebelo ki bo uporabna za razvrščanje kaznivih dejanj
 
 tabela3 <- zlocinci%>% filter(starost != "Starost - SKUPAJ")%>% 
   filter(dejanje != "KAZNIVO DEJANJE - SKUPAJ")%>%
   filter(leto == 2020) %>% dplyr:: select(-leto)
 
-#t <- tabela3 %>% group_by(dejanje) %>% summarise(obsojeni=sum(obsojeni)) 
-#t <- t$obsojeni == 0
 
 
-tabela3 <- tabela3 %>% group_by(dejanje, starost) %>% summarise(obsojeni=sum(obsojeni))
+t <- tabela3 %>% dplyr::group_by(dejanje) %>% dplyr::summarise(obsojeni=sum(obsojeni)) 
+t <- t$obsojeni == 0
+
+
+tabela3 <- tabela3 %>% dplyr::group_by(dejanje, starost) %>% dplyr::summarise(obsojeni=sum(obsojeni))
 
 tabela3 <- pivot_wider(tabela3,
                        names_from = 'starost',
                        values_from = 'obsojeni')
 
-#tabela3 <- tabela3[!t, ]
-
-#odločila sem se izbrisati vse vrstice iz tabele, v katerih se ni v nobeni starostni tabeli zgodil zločin
-
-
-
-#tabela3$starost = str_replace_all(tabela3$starost ,"do 20 let" , "20")
-#tabela3$starost = str_replace_all(tabela3$starost ,"od 21 do 30 let" , "30")
-#tabela3$starost = str_replace_all(tabela3$starost ,"od 31 do 40 let" , "40")
-#tabela3$starost = str_replace_all(tabela3$starost ,"od 41 do 50 let" ,"50")
-#tabela3$starost = str_replace_all(tabela3$starost ,"od 51 do 60 let" ,"60")
-#tabela3$starost = str_replace_all(tabela3$starost ,"nad 60 let" ,"70")
-
-
-
-
+tabela3 <- tabela3[!t, ]

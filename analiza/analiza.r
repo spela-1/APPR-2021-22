@@ -13,7 +13,7 @@ rownames(tabela3.norm) <- tabela3$dejanje
 #dendogramom
 
 dendrogram  <- dist(tabela3.norm) %>% hclust(method = "ward.D")
-plot(dendrogram, hang=-0.5, cex=0.01)
+#plot(dendrogram, hang=-0.5, cex=0.01)
 
 
 
@@ -22,9 +22,10 @@ plot(dendrogram, hang=-0.5, cex=0.01)
 hc.kolena = function(dendrogram, od = 1, do = NULL, eps = 0.5) {
   # število primerov in nastavitev parametra do
   n = length(dendrogram$height) + 1
-  do = n - 1
-  
-  # naredi tabelo
+  if (is.null(do)) {
+    do = n - 1
+  }
+
   k.visina = tibble(
     k = as.ordered(od:do),
     visina = dendrogram$height[do:od]
@@ -40,6 +41,7 @@ hc.kolena = function(dendrogram, od = 1, do = NULL, eps = 0.5) {
   k.visina
 }
 
+
 # iz tabele k.visina vrne seznam vrednosti k,
 # pri katerih opazujemo koleno
 hc.kolena.k = function(k.visina) {
@@ -51,6 +53,7 @@ hc.kolena.k = function(k.visina) {
     as.integer()
 }
 
+r = hc.kolena(dendrogram)
 
 # narišemo diagram višin združevanja
 diagram.kolena = function(k.visina) {
@@ -74,7 +77,8 @@ diagram.kolena = function(k.visina) {
     theme_classic()
 }
 
-diagram.kolena(r)
+
+kolena <- diagram.kolena(r)
 
 
 ### dendogram razrežemo na 5 delov
@@ -84,39 +88,12 @@ p <- cutree(dendrogram, k=5)
 
 
 
-
-# nariše diagram:
-
-#podatki <-  tabela3.norm %>%
-#    bind_cols(p) %>%
-#    rename(skupina = ...2)%>%
-#    rename(prva = ...1)
-  
-#d = podatki %>%ggplot(
-#      mapping = aes(
-#       color= skupina)     x,y=?????
-#      ) +
-#    geom_point() +
-#    geom_label(label = tabela3$dejanje, size = 2) +
-#    scale_color_hue() +
-#    theme_classic()
-  
-#  for (i in 1:3) {
-#    d = d + geom_encircle(
-#      data = podatki %>%
-#        filter(skupina == i)
-#    )
-#  }
-
-#print(d)  
-
-
-
 ##########################   NAPOVEDNI MODEL   ###########################  
 
 library(ggplot2)
 library(GGally)
 library(dplyr)
+
 ggpairs(tabela_r %>% dplyr::select(obsojeni, zadovoljstvo, revscina, stanovanje))
 #upoštevala bom vse tri parametre
 
@@ -158,7 +135,7 @@ napaka <- function(k, formula){
 
 }
 
-napaka(3, obsojeni ~ .)
+napaka.ln <- napaka(3, obsojeni ~ .)
 
 # puskusimo še z naključnimi gozdovi
   
@@ -188,7 +165,7 @@ napaka.ng <- function(k, formula){
   
 }
 
-napaka.ng(3, obsojeni ~ .)
+napaka.ng <- napaka.ng(3, obsojeni ~ .)
 
 
 ####### MOČ POSAMEZNE SPREMENLJIVKE
@@ -210,5 +187,5 @@ lm.pred = Predictor$new(model= model, data = X, y = podatki.n$obsojeni, predict.
 
 lm.moci = FeatureImp$new(lm.pred, loss = "mse")
 
-plot(lm.moci)
+moc <- plot(lm.moci)
 

@@ -13,25 +13,28 @@ source("uvoz/uvoz.r", encoding="UTF-8")
 
 
 g1 <- tabela_r %>% filter(regija!="SLOVENIJA") %>%
-  ggplot(
-    mapping = aes(x = leto, y = obsojeni, color = regija)
-  ) +
-  ylab("Število obsojenih na 1000 prebivalcev") + 
+  ggplot(mapping = aes(x = leto, y = obsojeni, color = regija))+
+  labs(x = "leto",
+    y = "Število obsojenih na 1000 prebivalcev",
+    title = "Število obsojenih po slovenskih regijah") + 
   geom_line() + geom_point() 
   
 
-print(g1)
+
             
 
 g2 <- tabela_r %>% filter(regija!="SLOVENIJA") %>%
   ggplot(
     mapping = aes(x = zadovoljstvo, y = obsojeni, color= revscina , size= stanovanje)
   ) +
-  ylab("Število obsojenih na 1000 prebivalcev")  +
-  xlab("Samoocena splošnega zadovoljstva z življenjem") + 
+  labs(y = "Število obsojenih na 1000 prebivalcev",
+       x = "Samoocena splošnega zadovoljstva z življenjem",
+       title = "Število obsojenih glede na socioekonomska stanja",
+       color = "Stopnja revščine",
+       size =  "Delež slabih stanovanj") + 
   geom_point(position = position_jitter(width = 0.10))     
              
-print(g2)
+
 
 
 g3 <- zlocinci %>% filter(dejanje == "KAZNIVO DEJANJE - SKUPAJ") %>%
@@ -39,12 +42,12 @@ g3 <- zlocinci %>% filter(dejanje == "KAZNIVO DEJANJE - SKUPAJ") %>%
   ggplot(
     mapping = aes(x = leto, y = obsojeni ,  fill = spol)
   )  +
-  ylab("Število obsojenih") + 
+  labs(x = "Leto", y = "Število obsojenih", title = "Število obsojenih po spolu", fill = "Spol") + 
   geom_col(
     position = position_dodge()
   )
              
-print(g3)
+
 
 
 g4 <- zlocinci %>% filter(starost != "Starost - SKUPAJ") %>%
@@ -52,10 +55,10 @@ g4 <- zlocinci %>% filter(starost != "Starost - SKUPAJ") %>%
   ggplot(
     mapping = aes(x = leto, y = obsojeni ,  fill = starost)
   )  +
-  ylab("Število obsojenih") + 
+  labs(x = "Leto", y = "Število obsojenih", title = "Število obsojenih po starostnih skupinah", fill = "Starostna skupina")+ 
   geom_col()
 
-print(g4)
+
 
 
 
@@ -63,13 +66,12 @@ g5 <- tabela2 %>%filter(leto == 2020)%>%
   ggplot(
     mapping = aes(x = starost, y = obsojeni, fill=dejanje)
   ) +
-  ylab("Število obsojenih")  + 
-  xlab("Starost zločincev")+
-  geom_col() + facet_wrap(.~ spol,ncol = 5) + 
-  labs(fill = "Kaznivo dejanje zoper")
+  labs(y = "Število obsojenih", x = "Starost zločincev", fill = "KAZNIVA DEJANJA ZOPER",
+       title = "Deset najpogostejših zločinov glede na spol in starost zločincev")+
+  geom_col() + facet_wrap(.~ spol,ncol = 5)
 
 
-print(g5)
+
 
 
 
@@ -77,14 +79,13 @@ g6 <- tabela_o %>% filter(obcina!="SLOVENIJA") %>% filter(leto >2010)%>%
   ggplot(
     mapping = aes(x = placa, y = obsojeni)
   ) +
-  xlab("Število obsojenih na 1000 prebivalcev")  +
-  ylab("Povprečna plača") + 
+  labs(y = "Število obsojenih na 1000 prebivalcev", x = "Povprečna plača",
+       title  = "Število obsojenih glede na povprečno plačo po letih") + 
   scale_y_log10() +
   geom_point(position = position_jitter(width = 0.10)) +
   facet_wrap(.~ leto,ncol = 5)
 
-print(g6)
- 
+
 # zdi se kot da spremenljivki nista najbolj povezani, zato bo opustila analiz med njima
 
 #--------------------------------------------------------------------------------
@@ -124,7 +125,7 @@ obcine.obsojeni.zemljevid <- merge(obcine, obsojeni.na.zemljevidu,
 
 
 tmap_mode("view")
-tm_shape(obcine.obsojeni.zemljevid) +
+map <- tm_shape(obcine.obsojeni.zemljevid) +
   tm_polygons("obsojeni", popup.vars = c("Število obsojenih na 1000 preb: " = "obsojeni")) + tm_legend(show=FALSE)
  
 
