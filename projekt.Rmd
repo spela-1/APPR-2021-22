@@ -138,6 +138,7 @@ kolena
 
 Napovedni model sem naredila s podatki iz drudega grafa. Sprva sam upoštevala le število obsojenih na 1000 prebivalcev v odvisnosti od treh izbranih parametrov (stopnja revscine, kvalitata stanovanj, samoocena zadovoljstva), kasneje pa sem ugotovila, da je za manjšo napako pomembna tudi regija in leto.
 Z prečnim preverjanjem, sem izračunala napako za napovedna modela: 
+
 - napaka za linearni napovedni model
 ```{r napaka.ln, echo=FALSE, fig.align='center'}
 napaka.ln
@@ -152,6 +153,10 @@ Ker je bila napaka pri linearnem modelu manjša, sem pri tem še izračunala, ko
 ```{r moc, echo=FALSE, fig.align='center'}
 moc
 ```
+
+Izbrani parametri torej nekoliko vplivajo na število obsojenih, vendar manj kot sem pričakovala.
+
+
 ***
 
 ```{r shiny}
