@@ -80,11 +80,117 @@ diagram.kolena = function(k.visina) {
 
 kolena <- diagram.kolena(r)
 
+## kolena so 2, 3, 5
 
 ### dendogram razrežemo na 5 delov
-plot(dendrogram, hang=-0.5, cex=0.01)
+
+plot(dendrogram, hang=-0.5, cex=0.1)
 rect.hclust(dendrogram,k=5,border="red")
 p <- cutree(dendrogram, k=5)
+
+
+
+
+
+## METODA K-TIH VODITELJEV 
+
+
+skupine = tabela3.norm[, -1] %>%
+  kmeans(centers = 3) %>%
+  getElement("cluster") %>%
+  as.ordered()
+
+
+
+
+#DIAGRAM
+
+
+# naredim tabelo, s katero lahko naredimo diagram v 2d
+
+razdalje <- tabela3.norm[, -1] %>% dist()
+dejanja = tabela3[, 1] %>% unlist()
+
+tabela3.xy =
+  as_tibble(razdalje %>% cmdscale(k = 2)) %>%
+  bind_cols(dejanja) %>%
+  dplyr:: select(dejanje = ...3, x = V1, y = V2)
+
+
+
+
+# poskusimo narisati diagram 
+
+diagram.skupine = function(tabela, oznake, skupine, k) {
+
+  podatki = tabela %>%
+    bind_cols(skupine) %>%
+    dplyr:: rename(skupina = ...4)
+  
+  d = podatki %>%
+    ggplot(
+      mapping = aes(
+        x = x, y = y, color = skupina
+      )
+    ) +
+    geom_point() +
+    geom_label(label = oznake, size = 2) +
+    scale_color_hue() +
+    theme_classic()
+  
+  for (i in 1:k) {
+    d = d + geom_encircle(
+      data = podatki %>%
+        filter(skupina == i)
+    )
+  }
+  d
+}
+
+
+
+diagram3 <- diagram.skupine(tabela3.xy, tabela3$dejanje, skupine, 3)
+
+
+
+
+
+## definicija funkcije za shiny
+
+izris <- function(stevilo){
+  
+  skupine = tabela3.norm[, -1] %>%
+    kmeans(centers = stevilo) %>%
+    getElement("cluster") %>%
+    as.ordered()
+  
+  tabela.3 = tabela3 %>%
+    bind_cols(skupine) %>%
+    dplyr:: rename(skupina = ...8)
+  
+  
+  podatki <- pivot_longer(tabela.3,
+                          cols = colnames(tabela3)[-1],
+                          names_to = "starost",
+                          values_to = "stevilo")
+  
+  podatki$starost <- parse_factor(podatki[["starost"]], levels = c("do 20 let", "od 21 do 30 let", "od 31 do 40 let", "od 41 do 50 let", "od 51 do 60 let", "nad 60 let"))
+  
+  g <- podatki%>%  group_by(starost) %>%
+    ggplot(
+      mapping = aes(x = starost, y = stevilo, fill = dejanje)
+    )  +
+    labs(x = "Starostne skupine", y = "Število obsojenih",
+         title = "Število obsojenih po starostnih skupinah")+ 
+    geom_col() + 
+    theme(legend.position = "None",
+      axis.text.x = element_text(angle = 45, vjust = 0.5),
+      axis.title.x = element_text(vjust = 0)
+    )+
+    facet_wrap(.~ skupina,ncol = 5)
+  
+  print(g)
+}
 
 
 

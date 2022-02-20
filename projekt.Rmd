@@ -21,8 +21,8 @@ source("lib/libraries.r", encoding="UTF-8")
 ## Izbira teme
 
 V projektu sem analizirala kriminal v Sloveniji.
-Opazovala sem število obsojenih glede na vrsto dejanja, spol, starostno skupino in leto.
-Želela pa sem tudi povezati število obsojenih glede na socioekonomske kazalnike po raztličnih regijah oz. občinah po Sloveniji. Torej sem gledala povezavo med številom obsojenih in povprečno samooceno splošnega zadovoljstva z življenjem, stopnjo tveganja revščine, s stanovanjskimi razmerami in povprečno plačo.  
+Želela sem povezati socioekonomski položaj ljudi s kriminaliteto dane regije. Moj cilj je bil preveriti, če je slaba kvaliteta življenja vzrok za višjo stopnjo kriminala. Za to sem si izbrala tri parametre, kateri bi odražali kvaliteto življenja: povprečno samooceno splošnega zadovoljstva z življenjem, stopnjo tveganja revščine in stanovanjskimi razmerami. Ker so bili ti podatki dani po statističnih regijah in ker sem si želela dalati s čim manjšo granulacijo podatkov, sem se odločila, da bom podobno naredila tudi za občine in sicer s povprečno plačo.
+Opazovala sem tudi katero kriminalno dejanje je bolj pogosto glede na dano demografsko skupino, torej sem opazovala število obsojenih za določeno kaznivo dejanje glede na spol in starostno skupino. Poskusila sem razvrstiti kriminala dejanja, glede na starost storilcev.
 
 ***
 
@@ -34,7 +34,7 @@ source("uvoz/uvoz.r", encoding="UTF-8")
 
 Podatke sem našla na Eurostatu in SiStatu, in jih uvozila kot CSV oz. HTML detoteke. Kasneje sem namesto tabele iz Eurostata raje uporabila samo podatke iz SiStata, saj so se zdeli bolj zanimivi (uvoz tabele iz Eurostata sem zakomentirala).
 
-Podatke sem uredila v naslednje tabele:
+Vse uvožene podatke sem uredila v naslednje tabele:
 
 1. _tabela "zlocinci" vsebuje podatke_:
   - vrsta kaznivega dejanja
@@ -70,38 +70,42 @@ source("vizualizacija/vizualizacija.r", encoding="UTF-8")
 g1
 ```
 
-V prvem grafu vidimo število obsojenih na 1000 prbivalcev po letih po slovenskih statističnih regijah.
-Vidimo, da kriminal na 1000 prebivalcev skozi leta pada, opazimo pa lahko tudi kako Jugovzhodna regija izstopa glede na ostale statistične regije.
+Prvi graf prikazuje število obsojenih na 1000 prebivalcev po letih po slovenskih statističnih regijah. Vsaka barva označuje drugo statistično regijo.
+Vidimo, da kriminal na 1000 prebivalcev skozi leta pada z vrhom v letu 2015. Kar se tiče posameznih regij močno izstopa Jugovzhodna regija, ki ima vsako leto vsaj eno obsojeno osebo na 1000 prebivalcev več od državnega povprečja. Najmanjše število obsojenih na 1000 prebivalcev pa je načeloma v Goriški regiji.
 
 
 ```{r g2, echo=FALSE, fig.align='center'}
 g2
 ```
 
-V naslednjem grafu sem želela preveriti, če je število obsojenih na 1000 prebivalcev v posamezni regiji odvisen od izbranih parametrov. Ti parametri so: Povpreča samoocena zadovoljstva z življenjem, stopnja revščine in delež stanovanj, ki so ocenjena kot slaba.
-Ker se mi je zdelo, da lahko iz grafa opazim korelacijo, sem se odločila, da bom iste podatke kasneje uporabila pri izdelavi napovednega modela in preverila, če hipoteza drži.
+V naslednjem grafu sem želela preveriti, če je število obsojenih na 1000 prebivalcev v posamezni regiji odvisen od izbranih parametrov. Ti parametri so: Povprečna samoocena zadovoljstva z življenjem, stopnja revščine in delež stanovanj, ki so ocenjena kot slaba. Na grafu je samoocena zadovoljstva z življenjem označena na x-osi, stopnja revščine s svetlostjo pik in stanje stanovanj z velikostjo pik. Opazila sem, da ko gremo po x-osi iz leve proti desne se pike vedno bolj pomikajo navzdol po y-osi, torej se z večanjem splošnega zadovoljstva z življenjem manjša kriminaliteta.Pravtako se zdi, da se velikost in svetlost pik manjša s tem ko gremo po y-osi navzdol, torej slabše kot je stanje stanovanj in večja kot je stopnja revščine, več je kriminala.  
+Ker se mi je zdelo, da lahko iz grafa opazim korelacijo, sem se odločila, da bom iste podatke kasneje uporabila pri izdelavi napovednega modela in preverila, če drži da se z boljšanjem življenskih pogojev manjša kriminaliteta.
 
 
 ```{r g4, echo=FALSE, fig.align='center'}
 g4
 ```
 
-S tem grafom sem želela pokazati, če katera od starostnih skupin močno izstopa po številu obsojenih. Vidimo, da je v starostni skupini do 20 let malo obsojenih. To je zato, ker  podatki zaobjemajo le polnoletne osebe. Manjše število obosjenih pa je tudi v starejših starostnih skupinah.
+
+S tem grafom sem želela preveriti, kako so obsojeni razporejeni po starostnih skupinah. Vidimo, da je v starostni skupini do 20 let malo obsojenih. To je zato, ker podatki zaobjemajo le polnoletne osebe. Manjše število obosjenih je tudi v starejših starostnih skupinah. Od tod lahko sklepamo, da je kriminaliteta odvisna od starosti prebivalstva, vendar  bi za takšno analizo potrebovala tudi podatke o staorsti prebivalstva v Sloveniji. Zato bom v nadeljevanju raje primerjala, če je kateri izmed zločinov bolj pogost pri posamezni demografski skupini. 
+Iz grafa lahko tudi opazimo, da je število obsojenih v Sloveniji naraščalo do leta 2015 in od tedaj pada.
 
 
 ```{r g5, echo=FALSE, fig.align='center'}
 g5
 ```
 
-Zanimalo me je, če so določena kazniva dejanja bolj pogosta glede na demografske skupine.
+Tako kot sem že omenila zgoraj, sem poskusila v tem grafu preveriti, če je kakšen od zločinov posebej zančilen za določeno demografsko skupino.
 Da bi bil graf bolj pregleden, sem vzela le deset najpogostejših zločinov.
+Iz grafa je najbolj očitno, da je veliko več moških kot žensk obsojenih za teh 10 kaznivih dejnj. Tako pri ženskah, kot pri moških je največ zločincev v starostni kategoriji med 31 in 40 let, nato pa število obsojenih po starosti pada. V vsaki demografski skupini velja, da je najbolj pogosto kaznivo dejanje zoper premoženje. Za starosti med 21 in 50 letom je bolj pogosto, kot pri ostalih starostnih skupinah kaznivo dejanje zoper zakonsko zvezo, družino in otroke. Kaznivo dejanje, ki z leti najmanj upade, je zoper človekove pravice in svobodščine in zoper premoženje. Kazniva dejanja zoper gospodarstvo so bolj pogosta v starostnih skupinah starejših od 31 let.
+Na podoben način, bi lahko našla še veliko zanimivih trednov padanja/naraščanja posameznih kaznivih dejanj, katere bi lahko poskusili obrazložiti z ureditvijo družbe oz. potekom življenj posameznikov (staranje, karierno napredovanje, itd). Zato bom v napredni analizi poskusila razvrstiti kazniva dejanja glede na starost obsojenih v skupine.
 
 
 ```{r g6, echo=FALSE, fig.align='center'}
 g6
 ```
 
-Tako kot v drugem grafu, sem želela najti korelacijo med številom obsojenih na 1000 prebivalcev glede na izbrane parametre, tokrat glede na povprečno plačo. V tem primeru so podatki dani po občinah namesto statističnih regijah.
+Tako kot v drugem grafu, sem tudi tu želela najti korelacijo med številom obsojenih na 1000 prebivalcev glede na izbrane parametre, tokrat glede na povprečno plačo. V tem primeru so podatki dani po občinah namesto statističnih regijah.
 Ker pa nisem opazila nobene korelacije sem se odločila, da ne bom nadeljevala s to analizo.
 
 ***
@@ -114,7 +118,7 @@ Ker pa nisem opazila nobene korelacije sem se odločila, da ne bom nadeljevala s
 map
 ```
 
-
+Ker sem opazila, da bilo za leto 2015 najmanj mankajočih podatkov, sem se odločila, da bo zemljevid števila obsojenih na 1000 prebivalcev po občinah narisala za to leto, hkrati pa je bilo takrat tudi obsojenih največ oseb.
 
 ## Napredna analiza podatkov
 
@@ -124,19 +128,24 @@ map
 source("analiza/analiza.r", encoding="UTF-8")
 ```
 
-
-Odločila sem se, da bom različna kazniva dejanja v letu 2020 razvrstila, glede na število obsojenih po starostnih skupinah. Kazniva dejanja, za katera ni bilo nobenega obsojenega v letu 2020, sem izpustila iz tabele. 
-Razvrstila sem jih v skupine z dendogramom.
-Število skupin pa sem določila s koleni.
+Zaradi analize grafa "Deset najpogostejših zločinov glede na spol in starost zločincev v letu 2020" sem se odločila, da bom različna kazniva dejanja v letu 2020 razvrstila, glede na število obsojenih po starostnih skupinah. Kazniva dejanja, za katera ni bilo nobenega obsojenega v letu 2020, sem izpustila iz tabele. 
+Sprva sem razvrstila kazniva dejanja v skupine z dendogramom.
+Število skupin pa sem določila s koleni. 
 
 ```{r kolena, echo=FALSE, fig.align='center'}
 kolena
 ```
 
+Ker sem sedaj vedela, da je smiselno razvrščati kazniva dejanja v 2, 3 ali 5 skupin sem naredila skupine tudi z metodo k-tih voditeljev. Primerjala sem razultata obeh razvrščanj (v pet skupin) in ugotovila, da so skupine narejene enako z izjemo enega kaznivega dejanja.
+Narisala sem tudi diagram, ki prikazuje kako so kazniva dejanja rezvrščena v skupine. Tu je uporabljena metoda k-tih voditeljev za razvrščanje v 3 skupine. Ker je diagram dokaj nepregleden, sem na koncu poročila dodala tudi Interaktivni graf, ki bolje prikaže dejanske skupine.
+
+```{r diagram3, echo=FALSE, fig.align='center'}
+diagram3
+```
 
 ### Napovedni model
 
-Napovedni model sem naredila z istimi podatki kot je bil narsan graf "Število obsojenih glede na socioekonomska stanja". Sprva sam upoštevala le število obsojenih na 1000 prebivalcev v odvisnosti od treh izbranih parametrov (stopnja revscine, kvalitata stanovanj, samoocena zadovoljstva), kasneje pa sem ugotovila, da je za manjšo napako pomembna tudi regija in leto.
+Napovedni model sem naredila z istimi podatki kot je bil narisan graf "Število obsojenih glede na socioekonomska stanja". Sprva sam upoštevala le število obsojenih na 1000 prebivalcev v odvisnosti od treh izbranih parametrov (stopnja revscine, kvalitata stanovanj, samoocena zadovoljstva), kasneje pa sem ugotovila, da je za manjšo napako pomembna tudi regija in leto.
 S prečnim preverjanjem sem izračunala napako za napovedna modela: 
 
 - napaka za linearni napovedni model
@@ -154,11 +163,26 @@ Ker je bila napaka pri linearnem modelu manjša, sem pri tem še izračunala, ko
 moc
 ```
 
-Izbrani parametri torej nekoliko vplivajo na število obsojenih, vendar manj kot sem pričakovala.
+Izbrani parametri torej nekoliko vplivajo na število obsojenih, vendar manj kot sem pričakovala. Večji vpliv imata leto in regija. Morda bi za ta model morala izbrati kakšen druga parameterm (npr. brezposelnost) ali pa zavreči celotno hipotezo.
 
 
 ***
 
 ```{r shiny}
-#shinyAppDir("shiny", options=list(width="100%", height=600))
+shinyAppDir("shiny", options=list(width="100%", height=600))
 ```
+
+Interaktivni graf torej bolj nazorno prikaže, kako so dejnasko narejene skupine kaznivih dejanj.
+Izberemo v koliko skupin želimo, da so kazniva dejnja razdeljena (na voljo so le kolena), nato pa se izrišejo grafi, ki za vsako skupino prikažejo koliko je obsojenih v starostni skupini. Vsako kaznivo dejanje je obarvano s svojo barvo.
+V vseh treh primerih ima kaznivo dejanje zoper premoženja svojo skupino, saj je toliko bolj pogosto od ostalih kaznivih dejanj.
+Če izberemo, da je skupin 5, vidimo, da so v eni od skupin kazniva dejnja, ki imajo glede na ostala zelo malo obsojenih. To je bilo za pričakovati, saj je veliko kaznivih dejanj za katere je bilo v letu 2020 le nekaj obsojenih. Dve skupini imata podobno obliko oz. razporeditev glede na starost obosjenih, le da jih je v eni skupini manj kot v drugi. Preostala skupina pa je določena tako, da je obsojenih, ki so stari med 21 in 30, več glede na ostale skupine.
+Če izberemo, da je skupin 3, pa je razporeditev v skupine še manj odvisna od porazdelitve v starostnih skupinah.
+
+## Zaključek
+
+Cilj projektne naloge je bil poiskati povezavo med socioekonomskimi dejavniki v statističnih regijah oz. občinah s številom obsojenih na 1000 prebivalcev. Vendar se je izkazalo, da večina izbranih parametrov ne napove pravilno števila obsojenih. Presenetilo me je, da se je kot najboljši izmed treh izbranih parametrov izkazala samoocena zadovoljstva, saj sem pričakovala, da bo na kriminaliteto bolj vplivala stopnja revščine, morda pa bi to veljalo, če bi vzela kazniva dejanja zoper premoženja. Zanimivo bi bilo preveriti tudi povezavo med kakšnim drugim parametom kot sta izobrazba in povprečna starost prebivalstva.
+
+Zanimivo se mi je tudi zdelo, da je razlika med obsojenci glede na spol tako velika. Morda bi bilo smiselno narediti razvrščanje v skupine tudi glede na spol obsojenih za posamezno dejanje.
+
+Najbolj pa me je presenetil trend padanja števila obsojenih. Zaradi poročanja medijev, se nam lahko hitro zgodi, da dobimo občutek, da je življenje vedno bolj nevarno, čeprav podatki kažejo, da temu ni tako.
+

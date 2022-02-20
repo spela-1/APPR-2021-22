@@ -1,0 +1,310 @@
+---
+title: "Poročila"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Na koncu semestra se bomo naučili izdelovati statična in interaktivna poročila.
+
+Statična poročila pripravljamo v navadnem zvezku napisanem v označevalnem jeziku **R Markdown**, verzije bolj splošnega označevalnega jezika [**Markdown**](https://en.wikipedia.org/wiki/Markdown). 
+
+Interaktivna poročila nam omogočajo dodajanje dinamičnih elementov tipa Shiny v navadne zvezke in omogočajo uporabniku, da enostavno spreminja vrednost spremenljivk v programski kodi R in si interaktivno ogleduje rezultate sprememb.
+
+---
+
+# Zvezki in označevalni jezik R Markdown
+
+*Zvezek* (angl. _notebook_) je datoteka s podaljškom `Rmd`. Na začetku datoteke je preambule, ki je od vsebine zvezka ločena z dvema vrsticama (na začetku in na koncu preambule) z vsebino `---`. Vsebina dokumenta se začne takoj za drugo vrstico `---`, ki označuje konec preambule; vsebino pripravimo v označevalnem jeziku R.
+
+## Preambula
+
+V preambuli zvezka navajamo ukaze oblike `element: vrednost`. Trije osnovni elementi z vrednostmi, ki so nizi znakov v narekovajih, so
+
+* `title`, ki določi naslov zvezka,
+* `author`, ki določi avtorja zvezka, in
+* `date`, ki določi datum priprave zvezka.
+
+Vrednost elementa `output` določa obliko izhodnega dokumenta. Običajna vrednost je `html_document`, ki pretvori zvezek v dokument v označevalnih jezikih HTML in CSS. Lahko pa je izhodni dokument tudi oblike
+
+* PDF (vrednost `pdf_document`), ki se pripravi s pomočjo označevalnega jezika $\LaTeX$;
+* različnih formatov za urejevalnike besedil: Word, vrednost `word_document`, ODT, vrednost `odt_document` ali RTF, vrednost `rtf_document``; ter
+* splošnega označevalnega jezika Markdown.
+
+Izhodni dokument je lahko tudi predstavitev, več informacij o tem najdemo [tukaj](https://bookdown.org/yihui/rmarkdown/output-formats.html).
+
+Primer preambule zvezka
+```
+---
+title: "Naslov poročila"
+author: "Marija Novak"
+date: "13. januar 2022"
+output: html_document
+---
+```
+
+## Vsebina in R Markdown
+
+Vsebino pripravljamo v zelo enostavnem označevalnem jeziku R Markdown. V nadaljevanju bomo ponovili njegove osnovne oznake. Bolj splošno različico tega označevalnega jezika Markdown uporabljate na platformi GitHub.
+
+### Besedilo, nadpovezave in slike
+
+Besedilo pripravljamo po odstavkih, med odstavki pustimo vsaj eno prazno vrstico. Nov odstavek lahko začnemo tudi tako, da **na koncu vrstice dodamo dva presledka** (to je tudi način kako v izhodnem dokumentu pridobimo prazno vrstico).
+
+Besedilo je lahko `_poševno_`, `**poudarjeno**`, `^nadpisano^`, `~podpisano~` ali `~~prečrtano~~`, prikaz: _poševno_, **poudarjeno**, ^nadpisano^, ~podpisano~ ali ~~prečrtano~~.
+
+Lahko uporabljamo navaden **vezaj** `-`, kot v sestavljenem pojmu informacijsko-komunikacijska tehnologija ali pa **pomišljaj** `--` za pisanje časovnega obdobja 2010--2020. Še daljšo črtico lahko dosežemo z `---`. Tri pike ... napišemo pač `...`. **Citate tujih besedil** označimo tako, da vrstice s citatom začnemo z znakom `>`. Tako se na primer koda
+
+```
+> A hoax is an attempt to trick an audience into believing that something false is real. Since Wikipedia is an "encyclopedia anyone can edit", it can be abused to create hoaxes.
+```
+prikaže kot
+
+> A hoax is an attempt to trick an audience into believing that something false is real. Since Wikipedia is an "encyclopedia anyone can edit", it can be abused to create hoaxes.
+
+**Spletne povezave (nadpovezave)** dodamo besedilu tako, da v oglate oklepaje napišemo besedilo povezave, v navadne oklepaje pa URL spletne povezave, npr. `[splenta stran FMF](https://www.fmf.uni-lj.si/)` se prikaže takole [splenta stran FMF](https://www.fmf.uni-lj.si/).
+
+Podobno lahko v dokument **vključimo sliko** `![](./md-logo.png)`, kar se prikaže takole ![](./md-logo.png).
+
+Besedilo kot običajno lahko strukturiramo v poglavja in podpoglavja. Naslov poglavja označimo tako, da vrstico z naslovom začnemo z nekaj znakov `#` in presledkom, ki jim sledi naslov. Število znakov `#` na začetku vrstice določa raven poglavja: `# Poglavje`, `## Podpoglavje`, `### Podpodpoglavje`, ...
+
+### Formule, seznami in tabele
+
+**Formule** pišemo tako s pomočjo označevalnega jezika $\LaTeX$, tako se npr. ` $e^{i \pi} + 1 = 0$ ` prikaže kot $e^{i \pi} + 1 = 0$. Lahko pa tudi v prikazovalnem načinu
+`$$ \sum\limits_{k=0}^{\infty} \frac{1}{k!} = e $$`, ki formulo prikaže v svoji, posebni vrstici:
+$$ \sum\limits_{k=0}^{\infty} \frac{1}{k!} = e. $$
+
+**Neurejene sezname postavk** tvorimo tako, da posamezne postavke začnemo v novi vrstici, ki ima na začetku znake `* `, `- ` ali `+ `. **Urejene sezname** pa začnemo z `1. ` ali `a. `. Če hočemo ugnezden seznam, na začetku vrstice dodamo **štiri** presledke.
+
+Tako bo vhodni dokument
+```
+1. Prva postavka urejenega seznama
+    a. Prva postavka ugnezdenega urejenega seznama
+    a. Druga postavka ...
+1. Druga postavka urejenega seznama
+    - Prva postavka ugnezdenega neurejenega seznama
+    - Druga postavka ...
+```
+
+prikazan kot
+
+1. Prva postavka urejenega seznama
+    a. Prva postavka ugnezdenega urejenega seznama
+    a. Druga postavka ...
+1. Druga postavka urejenega seznama
+    - Prva postavka ugnezdenega neurejenega seznama
+    - Druga postavka ...
+
+**Tabele** lahko oblikujemo bolj za silo takole
+
+Levo    Desno   Na sredini
+----- ------- -------------
+abc         1      abcd
+a         123      abc
+ab         12      abcde
+
+ali pa takole
+
+| Levo | Desno | Na sredini |
+|:-----|------:|:----------:|
+| abc  | 1     | abcd       |
+| a    | 123   | abc        |
+| ab   | 12    | abcde      |
+
+oziroma v kodi (ne pozbite pred in po tabeli pustiti po eno prazno vrstico):
+```
+
+Levo    Desno   Na sredini
+----- ------- -------------
+abc         1      abcd
+a         123      abc
+ab         12      abcde
+
+| Levo | Desno | Na sredini |
+|:-----|------:|:----------:|
+| abc  | 1     | abcd       |
+| a    | 123   | abc        |
+| ab   | 12    | abcde      |
+
+```
+
+Sicer pa podatkovne tabele izpišemo s kodo v R-ju, tudi tako, da koda za izpis ni prikazana, kot bomo pokazali v nadaljevanju.
+
+### Programska koda
+
+Zelo kratke koščke kode pišemo med enojnimi znaki `` ` `` (obratni narekovaj). Tako se košček kode `` `sum(1:10)` `` prikaže kot `sum(1:10)`.
+
+Daljšo, več vrstično kodo prikažemo tako, da jo ustavimo med dve vrstici z vsebino ```` ``` ````. V nadaljevanju prve vrstice lahko dodamo tudi `{r}`, zato da označimo, da gre za kodo v programskem jeziku R.
+
+Če hočemo, da se koda samo izvrši in ne prikaže prvi vrstici dodamo `{r include=FALSE}`. Drugi možni nastavitvi opcij, ki jih lahko dodamo, sta na primer `warning=FALSE` ali `error=FALSE`, kar prepreči prikazovanje opozoril ali napak kode v zvezek. Lahko tudi preprečimo izpis rezultatov kode z nastavitvijo opcije `results="hide"`.
+
+Nastavitev opcije `echo=FALSE` nam omogoča, da programsko kodo skrijemo in prikažemo le rezultate njenega izvajana. To je priročno takrat, ko hočemo s kodo prikazati le npr. tabelo ali graf, ne da bi bralca obremenjevali s programsko kodo, ki ustvari želeni rezultat.
+
+Z opcijam lahko tudi formatiramo oziroma določamo obliko izpisa kode. Z opcijo `out.width=80%` omejimo širino bloka za prikazovanje rezultatov (in drugih sporočil) kode na 80% širine zaslona. Če koda riše diagram, njegovo velikost lahko določimo z nastavitvijo opcij `fig.width` in `fig.height`.
+
+Celoten seznam opcij za prikazovanje programske kode in rezultatov si lahko ogledamo [tukaj](https://bookdown.org/yihui/rmarkdown/r-code.html).
+
+
+---
+
+# Interaktivni zvezki in dinamične komponente tipa Shiny
+
+Zvezek lahko postane interaktiven in tako omogoča uporabniku, da na enostaven način določa vrednosti izbranih parametrov (spremenljivk) v kodi zvezka ter tako vpliva na prikazane rezultate. Interakcijo dosežemo tako, da zvezku dodamo dinamične komponente tipa Shiny. Te so podobni komponentam, ki jih zvezkom v programu Mathematcia dodajmo s funkcijo Manipulate.
+
+Predpogoj, da v zvezek dodamo dinamične komponente, je da v preambulo zvezka dodamo vrstico `runtime: shiny`. Seveda je predpostavka, da bo izhodni dokument HTML, saj sicer interakcija (npr. za dokumente tipa PDF ali Word) ne bi bila možna.
+
+## Gradniki (angl. _widgets_) Shiny
+
+Gradniki so komponente Shiny nam omogočajo spreminjanje vrednosti parametrov (spremenljivk) v kodi zvezka. Torej nam omogočajo določanje vrednosti vhodnih spremenljivk. Zvezku jih dodamo z uporabo funkcij, ki imajo imena s končnico `Input`.
+
+Shiny podpira celo vrsto različnih gradnikov za zajemanje vhoda, ki ustreza različnim tipom vhodnih spremenljivk. Za numerične spremenljvike pogosto uporabljamo drsnik (angl. _slider_), za diskretne spremenljivke padajoči meni. Hkrati pa gradnike lahko združujemo skupaj v panele s funkcijo `inputPanel` takole:
+```{r}
+inputPanel(
+  sliderInput(
+    "n.skupin",
+    label = "Število skupin:",
+    min = 2, max = 10, step = 1,
+    value = 3
+  ),
+  selectInput(
+    "algoritem",
+    label = "Algoritem za razvrščanje v skupine:",
+    choices = c("hierarhično razvrščanje", "metoda k-tih voditeljev"),
+    selected = "hierarhično razvrščanje"
+  )
+)
+```
+
+Gradnikov je še veliko, [tukaj](https://shiny.rstudio.com/gallery/widget-gallery.html) je na voljo galerija gradnikov, ki jih podpira Shiny.
+
+
+## Upodabljanje rezultatov
+
+Gradniki nam torej omogočajo zajemanje vhodov, rezultat pa lahko prilagodimo vhodov s komponentami za upodabljanje rezultatov. Te definiramo s funkcijam, ki imajo imena s predpono `render`. Tako, če hočemo le izpisovati nastavljene vrednosti spremenljivk bomo uporabili `renderPrint`:
+```{r}
+renderPrint({
+  list(input$n.skupin, input$algoritem)
+})
+```
+
+Iz kode je torej razvidno, da vrednosti, ki so jih zajeli gradniki, lahko dobimo z uporabo seznama `input`. Ta ima za vsak gradnik svoj element z imenom, ki je enak vrednosti prvega argumenta klica funkcije s katerim smo ustvarili gradnik. Tako vrednosti, ki jih zajemata zgoraj definirana gradnika so na voljo v `input$n.skupin` in `input$algoritem`.
+
+
+## Interaktivno poročilo o razvrščanju v skupine
+
+Poglejmo zdaj kako lahko pripravimo interaktivno poročilo o razvrščanju v skupine. Izposodili si bomo kodo iz zvezka za predavanja o razvrščanju. Najprej bomo ustvarili umetne podatke za razvrščanje (za pojasnila kode pogledajte zvezek za predavanje o tej temi):
+```{r}
+library(tidyverse)
+library(ggalt)
+
+set.seed(2021.12)
+
+r = c(rep(1, 6), rep(1.5, 9)) * runif(15)
+phi = 2 * pi * runif(15)
+
+primeri = tibble(
+  oznaka = c(letters[26:(26 - 6 + 1)], LETTERS[1:9]),
+  x = r * cos(phi) + c(rep(-1, 6), rep(1.5, 9)),
+  y = r * sin(phi) + c(rep(-1, 6), rep(1.5, 9))
+)
+```
+
+Izposodimo si še nekaj kode, ki za podane podatki, mero razdalje med skupinami in število skupin nariše diagram skupin:
+```{r}
+narisi.skupine = function(podatki, mera, k) {
+
+  dendrogram = podatki[, -1] %>%
+    dist() %>%
+    hclust(method = mera)
+  
+  skupine = dendrogram %>%
+    cutree(k = k) %>%
+    as.ordered()
+
+  podatki = podatki %>%
+    bind_cols(skupine) %>%
+    rename(skupina = ...4)
+
+  d = podatki %>%
+  ggplot(
+    mapping = aes(
+      x = x, y = y, color = skupina
+    )
+  ) +
+  geom_point() +
+  geom_label(label = podatki$oznaka, size = 2) +
+  scale_color_hue() +
+  theme_classic()
+  
+  for (i in 1:k) {
+    d = d + geom_encircle(
+      data = podatki %>%
+        filter(skupina == i)
+    )
+  }
+  d
+}
+```
+
+Pripravimo sedaj gradnike in komponente za upodabljanje rezultatov, ki nam omogočajo interaktivno razvrščanje v skupine:
+```{r echo=FALSE}
+titlePanel("Hierarhično razvrščanje v skupine")
+
+column(4,
+  inputPanel(
+    sliderInput(
+      "k",
+      label = "Število skupin:",
+      min = 2, max = 8, step = 1,
+      value = 4
+    ),
+    radioButtons(
+      "mera",
+      label = "Mera razdalje med skupinami:",
+      choices = c(
+        "complete",
+        "single",
+        "average",
+        "ward.D"
+      ),
+      selected = "ward.D"
+    )
+  )
+)
+
+column(8,
+  renderPlot({
+      narisi.skupine(primeri, input$mera, input$k)
+  })
+)
+```
+
+Običajni prikaz Shiny razdeli polje za prikaz na 12 stolpcev. V zgornjem primeru smo izkoristili prve štiri stolpce za prikazovanje gradnikov, preostalih osem pa za upodobitev diagrama s skupinami. To smo storili z dvakratnim klicem funkcije `column`. Njen prvi argument določi širino kot število stolpcev, ki naj ga prikazani element zavzame. Pred stolpci smo s funkcijo `titlePanel` dodali še komponento, kjer lahko prikažemo naslov interaktivnega dela dokumenta.
+
+---
+
+# Izdelava spletnih aplikacij s Shiny
+
+Na isti način, z uporabo komponent Shiny, lahko ustvarimo tudi spletne aplikacije, ki bi lahko delovale nedovisno od okolja RStduio. To presega obseg predavanj, več informacij o tem lahko najdemo [tukaj](https://shiny.rstudio.com/tutorial/). Spletna stran ponuja vrsto primerov, ki jih lahko uporabimo kot vzorce za razvoj lastnih spletnih/ Shiny aplikacij.
+
+
+---
+
+# Nadaljnje branje
+
+Več o tvorjenju interaktivnih poročil lahko preberete v dokumentih
+
+* [Introduction to R Markdown](https://shiny.rstudio.com/articles/rmarkdown.html)
+
+* [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html)
+
+in učbeniku [_R Markdown: The Definitive Guide_](https://bookdown.org/yihui/rmarkdown/) avtorjev _Yihui Xie_, _J. J. Allaire_ in _Garrett Grolemund_.
+
+Prav prideta tudi [kratek](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) in [daljši](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf) plonkec.
+
+---
+
+Zvezek sem januarja 2022 pripravil [Ljupčo Todorovski](http://kt.ijs.si/~ljupco/) v jeziku [R Markdown](http://rmarkdown.rstudio.com).
