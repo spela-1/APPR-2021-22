@@ -9,8 +9,6 @@ V svojem projektu bom analizirala število obsojenih za kriminalna dejanja v Slo
 Podatke, ki bom vključila v projektno naloga sem našla na stani Statističnega urada republike Slovenije in Eurostatu.
 
 Podatke bom uredila v tabele:
-
-Podatke sem uredila v naslednje tabele:
   
 
 Tabela 1: Kazniva dejanja glede na kategorije
