@@ -1,6 +1,6 @@
 # Analiza podatkov s programom R - 2021/22
 
-Vzorčni repozitorij za projekt pri predmetu APPR v študijskem letu 2021/22. 
+Repozitorij za projekt pri predmetu Analiza podatkov s programom R v študijskem letu 2021/22. 
 
 
 ## Analiza kriminala v Sloveniji
